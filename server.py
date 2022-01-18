@@ -1,7 +1,7 @@
 import logging
 import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseSettings
 from sqlalchemy import text
 from fastapi.param_functions import Depends
@@ -38,8 +38,8 @@ async def get_session() -> AsyncSession:
         yield session
 
 
-@app.get("/api/create")
-async def create(session: AsyncSession = Depends(get_session)):
+@app.post("/api/create")
+async def create(request: Request, session: AsyncSession = Depends(get_session)):
     sql_text = f"""
             select * from meetings
         """
@@ -48,7 +48,7 @@ async def create(session: AsyncSession = Depends(get_session)):
         res = await session.execute(sql_text)
         await session.commit()
         logger.info(res.all())
-        return 'ok'
+        return await request.json()
     except Exception as ex:
         logger.info(ex)
 
@@ -74,4 +74,4 @@ async def select_all(session: AsyncSession = Depends(get_session)):
 
 
 if __name__ == "__main__":
-    uvicorn.run('entry:app', port=8080, reload=True)
+    uvicorn.run('server:app', port=8080, reload=True)
