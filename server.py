@@ -2,8 +2,10 @@ import logging
 import uvicorn
 import time
 
+from typing import Optional, List
+from pydantic import BaseModel
 from datetime import datetime
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseSettings
 from sqlalchemy import text
 from fastapi.param_functions import Depends
@@ -36,21 +38,29 @@ async_session = sessionmaker(
 )
 
 
+class Meeting(BaseModel):
+    id: Optional[int] = None
+    name: str
+    start_time: datetime
+    end_time: datetime
+    emails: List[str]
+
+
 async def get_session() -> AsyncSession:
     async with async_session() as session:
         yield session
 
 
 @app.post("/api/create")
-async def create(request: Request, session: AsyncSession = Depends(get_session)):
-    body = await request.json()
+async def create(body: Meeting, session: AsyncSession = Depends(get_session)):
+    print(body)
     sql_text = f"""
             insert into meetings (name, start_time, end_time, emails)
             values 
-            ('{body['name']}', 
-            '{datetime.fromtimestamp(time.mktime(time.gmtime()))}', 
-            '{datetime.fromtimestamp(time.mktime(time.gmtime()))}',
-            "{body['emails']}")
+            ('{body.name}', 
+            '{body.start_time}', 
+            '{body.end_time}',
+            "{body.emails}")
             returning id;
         """
 
@@ -60,22 +70,21 @@ async def create(request: Request, session: AsyncSession = Depends(get_session))
 
 
 @app.post("/api/update")
-async def update(request: Request, session: AsyncSession = Depends(get_session)):
-    body = await request.json()
+async def update(body: Meeting, session: AsyncSession = Depends(get_session)):
     sql_text = f"""
             UPDATE meetings
             SET 
-                name='{body['name']}', 
-                start_time='{body['start_time']}', 
-                end_time='{body['end_time']}', 
-                emails="{body['emails']}"
+                name='{body.name}', 
+                start_time='{body.start_time}', 
+                end_time='{body.end_time}', 
+                emails="{body.emails}"
             WHERE
-                id = {body['id']}
+                id = {body.id}
         """
 
     await session.execute(text(sql_text))
     await session.commit()
-    return body['id']
+    return body.id
 
 
 @app.get("/api/delete/{meeting_id}")

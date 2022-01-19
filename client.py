@@ -3,9 +3,6 @@ import asyncio
 import json
 import aiohttp
 
-from datetime import datetime
-from pydantic import BaseModel
-
 parser = argparse.ArgumentParser(description="server")
 parser.add_argument('--api-root', help='select app root', default='localhost:8080/api', nargs='?')
 parser.add_argument('function', choices=['create', 'select', 'update', 'delete', 'create_table'])
@@ -15,14 +12,6 @@ parser.add_argument('parameter', nargs='?')
 
 args = parser.parse_args()
 # todo comments
-
-
-class Meeting(BaseModel):
-    id: int
-    name: str
-    start_time: datetime
-    end_time: datetime
-    emails: str
 
 
 async def main():
