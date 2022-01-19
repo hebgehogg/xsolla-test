@@ -90,7 +90,7 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
                 """
             await save_request(update_request, session)
             logger.info(f'meeting {meeting.id} updated')
-            return f'updated meeting id: {meeting.id}'
+            return f'meeting updated by id = {meeting.id}'
         else: return 'this meeting does not exist or has been deleted'
     except Exception as ex:
         logger.info(ex)
@@ -99,13 +99,20 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
 
 @app.get("/api/delete/{meeting_id}")
 async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
-    # todo удалить то, чего нет))
     try:
-        await session.execute(text(f"""DELETE FROM meetings WHERE id = {meeting_id}"""))
-        await session.commit()
-        return meeting_id
+        check_request = f"""
+                    SELECT * FROM meetings
+                    WHERE id = {meeting_id}
+                    """
+        check = await get_request(check_request, session)
+        if check:
+            delete_request = f'DELETE FROM meetings WHERE id = {meeting_id}'
+            await save_request(delete_request, session)
+            return f'meeting deleted by id = {meeting_id}'
+        else: return 'this meeting does not exist or has been deleted'
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 @app.get("/api/select/select_count")
