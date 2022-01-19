@@ -99,11 +99,20 @@ async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
         logger.info(ex)
 
 
-@app.get("/api/select")
-async def select(session: AsyncSession = Depends(get_session)):
-    # todo - нагрузка
+@app.get("/api/select_all/select_count")
+async def select_count(session: AsyncSession = Depends(get_session)):
     try:
-        meeting_data = await session.execute(text(f"""select * from meetings"""))
+        count_request = await session.execute(text(f"""SELECT count(*) FROM meetings;"""))
+        await session.commit()
+        return count_request.one()
+    except Exception as ex:
+        logger.info(ex)
+
+
+@app.get("/api/select_all/{step}")
+async def select_all(step: int, session: AsyncSession = Depends(get_session)):
+    try:
+        meeting_data = await session.execute(text(f"""select * from meetings LIMIT 10 OFFSET {step}"""))
         await session.commit()
         return meeting_data.all()
     except Exception as ex:

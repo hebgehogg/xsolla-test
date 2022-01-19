@@ -27,10 +27,21 @@ async def main():
                 url = f'{base_root}/{args.function[2]}'
             except: url = base_root
 
-            async with aiohttp.ClientSession() as client:
-                async with client.get(url) as response:
-                    print(await response.json())
+            # async with aiohttp.ClientSession() as client:
+            #     async with client.get(url) as response:
+            #         print(await response.json())
 
+            if args.function[1] == 'select_all':
+                url = f'{base_root}/select_count'
+                async with aiohttp.ClientSession() as client:
+                    async with client.get(url) as response:
+                        count = await response.json()
+                        print(count)
+                for item in range(0, count['count(*)'], 10):
+                    url = f'{base_root}/{item}'
+                    async with aiohttp.ClientSession() as client:
+                        async with client.get(url) as response:
+                            print(await response.json())
 
 if __name__ == "__main__":
     asyncio.run(main())
