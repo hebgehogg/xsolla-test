@@ -89,17 +89,7 @@ async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
         logger.info(ex)
 
 
-@app.get("/api/select/{meeting_id}")
-async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
-    try:
-        meeting_data = await session.execute(text(f"""select * from meetings where id = {meeting_id}"""))
-        await session.commit()
-        return meeting_data.all()
-    except Exception as ex:
-        logger.info(ex)
-
-
-@app.get("/api/select_all/select_count")
+@app.get("/api/select/select_count")
 async def select_count(session: AsyncSession = Depends(get_session)):
     try:
         count_request = await session.execute(text(f"""SELECT count(*) FROM meetings;"""))
@@ -109,10 +99,20 @@ async def select_count(session: AsyncSession = Depends(get_session)):
         logger.info(ex)
 
 
-@app.get("/api/select_all/{step}")
-async def select_all(step: int, session: AsyncSession = Depends(get_session)):
+@app.get("/api/select/select_all/{offset}")
+async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
     try:
-        meeting_data = await session.execute(text(f"""select * from meetings LIMIT 10 OFFSET {step}"""))
+        meeting_data = await session.execute(text(f"""select * from meetings LIMIT 10 OFFSET {offset}"""))
+        await session.commit()
+        return meeting_data.all()
+    except Exception as ex:
+        logger.info(ex)
+
+
+@app.get("/api/select/{meeting_id}")
+async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
+    try:
+        meeting_data = await session.execute(text(f"""select * from meetings where id = {meeting_id}"""))
         await session.commit()
         return meeting_data.all()
     except Exception as ex:

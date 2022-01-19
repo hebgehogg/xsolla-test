@@ -3,45 +3,64 @@ import asyncio
 import json
 import aiohttp
 
+from datetime import datetime
+from pydantic import BaseModel
 
 parser = argparse.ArgumentParser(description="server")
-parser.add_argument('-r', '--api-root', help='select app root', default='localhost:8080/api/')
-parser.add_argument('function', nargs='*')
+parser.add_argument('--api-root', help='select app root', default='localhost:8080/api', nargs='?')
+parser.add_argument('function', choices=['create', 'select', 'update', 'delete', 'create_table'])
+parser.add_argument('parameter', nargs='?')
+
 # python client.py —api-root=localhost:8080/api/ select 2
 
 args = parser.parse_args()
 # todo comments
 
 
+class Meeting(BaseModel):
+    id: int
+    name: str
+    start_time: datetime
+    end_time: datetime
+    emails: str
+
+
 async def main():
-    if args.api_root:
-        base_root = f'http://{args.api_root}{args.function[1]}'
-        if args.function[1] == 'create' or args.function[1] == 'update':
-            with open(args.function[2]) as json_file:
-                file = json.load(json_file)
-            async with aiohttp.ClientSession() as client:
-                async with client.post(base_root, json=file) as response:
-                    print(await response.json())
+    base_root = f'http://{args.api_root}'
+
+    if args.function == 'select':
+        if args.parameter is not None:
+            item = await get_request(f'{base_root}/{args.function}/{args.parameter}')
+            print(item)
         else:
-            try:
-                url = f'{base_root}/{args.function[2]}'
-            except: url = base_root
+            count = await get_request(f'{base_root}/{args.function}/select_count')
+            print(count)
+            for offset in range(0, count['count(*)'], 10):
+                meetings = await get_request(f'{base_root}/{args.function}/select_all/{offset}')
+                print(meetings)
 
-            # async with aiohttp.ClientSession() as client:
-            #     async with client.get(url) as response:
-            #         print(await response.json())
+    elif args.function == 'create' or args.function == 'update':
+        with open(args.parameter) as json_file:
+            file = json.load(json_file)
+        item = await post_request(f'{base_root}/{args.function}', file)
+        print(item)
 
-            if args.function[1] == 'select_all':
-                url = f'{base_root}/select_count'
-                async with aiohttp.ClientSession() as client:
-                    async with client.get(url) as response:
-                        count = await response.json()
-                        print(count)
-                for item in range(0, count['count(*)'], 10):
-                    url = f'{base_root}/{item}'
-                    async with aiohttp.ClientSession() as client:
-                        async with client.get(url) as response:
-                            print(await response.json())
+    else:
+        result = await get_request(f'{base_root}/{args.function}/{args.parameter}')
+        print(result)
+
+
+async def post_request(url, file):
+    async with aiohttp.ClientSession() as client:
+        async with client.post(url, json=file) as response:
+            return await response.json()
+
+
+async def get_request(url):
+    async with aiohttp.ClientSession() as client:
+        async with client.get(url) as response:
+            return await response.json()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
