@@ -11,7 +11,6 @@ parser.add_argument('parameter', nargs='?')
 # python client.py —api-root=localhost:8080/api/ select 2
 
 args = parser.parse_args()
-# todo comments
 
 
 async def main():
