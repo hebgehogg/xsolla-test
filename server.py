@@ -50,23 +50,23 @@ async def get_session() -> AsyncSession:
 
 
 @app.post("/api/create")
-async def create(body: Meeting, session: AsyncSession = Depends(get_session)):
+async def create(meeting: Meeting, session: AsyncSession = Depends(get_session)):
     try:
-        sql_text = f"""
+        create_request = f"""
                 insert into meetings (name, start_time, end_time, emails)
                 values 
-                ('{body.name}', 
-                '{body.start_time}', 
-                '{body.end_time}',
-                "{body.emails}")
+                ('{meeting.name}', 
+                '{meeting.start_time}', 
+                '{meeting.end_time}',
+                "{meeting.emails}")
                 returning id;
             """
-
-        meeting_id = await session.execute(text(sql_text))
-        await session.commit()
-        return meeting_id.all()
+        meeting_id = await get_request(create_request, session)
+        logger.info(f'meeting {meeting_id} created')
+        return f'meeting_id = {meeting_id}'
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 @app.post("/api/update")
@@ -108,6 +108,7 @@ async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
         if check:
             delete_request = f'DELETE FROM meetings WHERE id = {meeting_id}'
             await save_request(delete_request, session)
+            logger.info(f'meeting {meeting_id} deleted')
             return f'meeting deleted by id = {meeting_id}'
         else: return 'this meeting does not exist or has been deleted'
     except Exception as ex:
@@ -118,37 +119,41 @@ async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
 @app.get("/api/select/select_count")
 async def select_count(session: AsyncSession = Depends(get_session)):
     try:
-        count_request = await session.execute(text(f"""SELECT count(*) FROM meetings;"""))
-        await session.commit()
-        return count_request.one()
+        count_request = f'SELECT count(*) FROM meetings'
+        count = await get_request(count_request, session)
+        return count
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 @app.get("/api/select/select_all/{offset}")
 async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
     try:
-        meeting_data = await session.execute(text(f"""select * from meetings LIMIT 10 OFFSET {offset}"""))
+        meetings = await session.execute(text(f'SELECT * FROM meetings LIMIT 10 OFFSET {offset}'))
         await session.commit()
-        return meeting_data.all()
+        return meetings.all()
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 @app.get("/api/select/{meeting_id}")
 async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
     try:
-        meeting_data = await session.execute(text(f"""select * from meetings where id = {meeting_id}"""))
-        await session.commit()
-        return meeting_data.all()
+        select_request = f'select * from meetings where id = {meeting_id}'
+        meeting = await get_request(select_request, session)
+        logger.info(f'meeting {meeting_id} showed')
+        return meeting
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 @app.get("/api/create_table")
 async def create_table(session: AsyncSession = Depends(get_session)):
     try:
-        sql_text = f"""
+        create_table_request = f"""
                     CREATE TABLE meetings (
                         id integer PRIMARY KEY,
                         name text NOT NULL,
@@ -157,16 +162,17 @@ async def create_table(session: AsyncSession = Depends(get_session)):
                         emails text NOT NULL
                     )
                 """
-        await session.execute(text(sql_text))
-        await session.commit()
+        await save_request(create_table_request, session)
+        return 'table meetings created'
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 async def get_request(sql_text, session):
     response = await session.execute(text(sql_text))
     await session.commit()
-    return response.all()
+    return response.one()
 
 
 async def save_request(sql_text, session):

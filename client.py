@@ -34,8 +34,11 @@ async def main():
         item = await post_request(f'{base_root}/{args.function}', file)
         print(item)
 
-    else:
+    elif args.function == 'delete':
         result = await get_request(f'{base_root}/{args.function}/{args.parameter}')
+        print(result)
+    else:
+        result = await get_request(f'{base_root}/{args.function}')
         print(result)
 
 
