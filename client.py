@@ -1,39 +1,36 @@
 import argparse
 import asyncio
 import json
-
 import aiohttp
 
 parser = argparse.ArgumentParser(description="server")
 parser.add_argument('-r', '--api-root', help='select app root', default='localhost:8080/api/')
-parser.add_argument('function')
-parser.add_argument('file')
-# parser.add_argument('id', required=False)
+parser.add_argument('function', nargs='*')
+# python client.py —api-root=localhost:8080/api/ select 2
+
 args = parser.parse_args()
-# print(args.file.readlines())
 # todo comments
-
-base_root = args.api_root
-
-
-async def requester(url: str, body=None):
-    if args.function == 'create':
-        async with aiohttp.ClientSession() as client:
-            async with client.post(url, json=body) as response:
-                print(await response.json())
-    else:
-        async with aiohttp.ClientSession() as client:
-            async with client.get(url) as response:
-                print(await response.json())
 
 
 async def main():
-    url = f'http://{base_root}{args.function}'
+    print(args.function)
+    if args.api_root:
 
-    with open(args.file) as json_file:
-        data = json.load(json_file)
-    if args.function == 'create':
-        await requester(url, data)
+        base_root = f'http://{args.api_root}{args.function[1]}'
+        if args.function[1] == 'create' or args.function[1] == 'update':
+            with open(args.function[2]) as json_file:
+                file = json.load(json_file)
+            async with aiohttp.ClientSession() as client:
+                async with client.post(base_root, json=json.load(file)) as response:
+                    print(await response.json())
+        else:
+            try:
+                url = f'{base_root}/{args.function[2]}'
+            except: url = base_root
+
+            async with aiohttp.ClientSession() as client:
+                async with client.get(url) as response:
+                    print(await response.json())
 
 
 if __name__ == "__main__":

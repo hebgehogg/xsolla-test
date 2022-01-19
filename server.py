@@ -53,24 +53,35 @@ async def create(request: Request, session: AsyncSession = Depends(get_session))
         logger.info(ex)
 
 
-@app.get("/api/update")
-async def update(session: AsyncSession = Depends(get_session)):
-    pass
+@app.get("/api/update/{meeting_id}")
+async def update(meeting_id: int, request: Request, session: AsyncSession = Depends(get_session)):
+    # Метод изменяет все данные встречи по ее уникальному идентификатору.
+    sql_text = f"""
+            select * from meetings
+        """
+    sql_text = text(sql_text)
+    try:
+        res = await session.execute(sql_text)
+        await session.commit()
+        logger.info(res.all())
+        return await request.json()
+    except Exception as ex:
+        logger.info(ex)
 
 
 @app.get("/api/delete")
-async def delete(session: AsyncSession = Depends(get_session)):
-    pass
+async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
+    return meeting_id
+
+
+@app.get("/api/select/{meeting_id}")
+async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
+    return meeting_id
 
 
 @app.get("/api/select")
 async def select(session: AsyncSession = Depends(get_session)):
-    pass
-
-
-@app.get("/api/select_all")
-async def select_all(session: AsyncSession = Depends(get_session)):
-    pass
+    return 400
 
 
 if __name__ == "__main__":
