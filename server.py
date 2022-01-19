@@ -53,38 +53,44 @@ async def get_session() -> AsyncSession:
 
 @app.post("/api/create")
 async def create(body: Meeting, session: AsyncSession = Depends(get_session)):
-    print(body)
-    sql_text = f"""
-            insert into meetings (name, start_time, end_time, emails)
-            values 
-            ('{body.name}', 
-            '{body.start_time}', 
-            '{body.end_time}',
-            "{body.emails}")
-            returning id;
-        """
+    try:
+        sql_text = f"""
+                insert into meetings (name, start_time, end_time, emails)
+                values 
+                ('{body.name}', 
+                '{body.start_time}', 
+                '{body.end_time}',
+                "{body.emails}")
+                returning id;
+            """
 
-    meeting_id = await session.execute(text(sql_text))
-    await session.commit()
-    return meeting_id.all()
+        meeting_id = await session.execute(text(sql_text))
+        await session.commit()
+        return meeting_id.all()
+    except Exception as ex:
+        logger.info(ex)
 
 
 @app.post("/api/update")
 async def update(body: Meeting, session: AsyncSession = Depends(get_session)):
-    sql_text = f"""
-            UPDATE meetings
-            SET 
-                name='{body.name}', 
-                start_time='{body.start_time}', 
-                end_time='{body.end_time}', 
-                emails="{body.emails}"
-            WHERE
-                id = {body.id}
-        """
+    # todo обновить то, чего нет))
+    try:
+        sql_text = f"""
+                UPDATE meetings
+                SET 
+                    name='{body.name}', 
+                    start_time='{body.start_time}', 
+                    end_time='{body.end_time}', 
+                    emails="{body.emails}"
+                WHERE
+                    id = {body.id}
+            """
 
-    await session.execute(text(sql_text))
-    await session.commit()
-    return body.id
+        await session.execute(text(sql_text))
+        await session.commit()
+        return body.id
+    except Exception as ex:
+        logger.info(ex)
 
 
 @app.get("/api/delete/{meeting_id}")
@@ -130,18 +136,20 @@ async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
 
 @app.get("/api/create_table")
 async def create_table(session: AsyncSession = Depends(get_session)):
-    sql_text = f"""
-                CREATE TABLE meetings (
-                    id integer PRIMARY KEY,
-                    name text NOT NULL,
-                    start_time datatime NOT NULL,
-                    end_time datatime NOT NULL,
-                    emails text NOT NULL
-                )
-            """
-    await session.execute(text(sql_text))
-    await session.commit()
-
+    try:
+        sql_text = f"""
+                    CREATE TABLE meetings (
+                        id integer PRIMARY KEY,
+                        name text NOT NULL,
+                        start_time datatime NOT NULL,
+                        end_time datatime NOT NULL,
+                        emails text NOT NULL
+                    )
+                """
+        await session.execute(text(sql_text))
+        await session.commit()
+    except Exception as ex:
+        logger.info(ex)
 
 if __name__ == "__main__":
     uvicorn.run('server:app', port=8080, reload=True)
