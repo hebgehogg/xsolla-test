@@ -1,6 +1,5 @@
 import logging
 import uvicorn
-import time
 
 from typing import Optional, List
 from pydantic import BaseModel
@@ -12,7 +11,6 @@ from fastapi.param_functions import Depends
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy.ext.asyncio import engine
-# todo logging
 
 logging.basicConfig(
     level=logging.INFO,
@@ -72,25 +70,31 @@ async def create(body: Meeting, session: AsyncSession = Depends(get_session)):
 
 
 @app.post("/api/update")
-async def update(body: Meeting, session: AsyncSession = Depends(get_session)):
-    # todo обновить то, чего нет))
+async def update(meeting: Meeting, session: AsyncSession = Depends(get_session)):
     try:
-        sql_text = f"""
+        check_request = f"""
+            SELECT * FROM meetings
+            WHERE id = {meeting.id}
+            """
+        check = await get_request(check_request, session)
+        if check:
+            update_request = f"""
                 UPDATE meetings
                 SET 
-                    name='{body.name}', 
-                    start_time='{body.start_time}', 
-                    end_time='{body.end_time}', 
-                    emails="{body.emails}"
+                    name='{meeting.name}', 
+                    start_time='{meeting.start_time}', 
+                    end_time='{meeting.end_time}', 
+                    emails="{meeting.emails}"
                 WHERE
-                    id = {body.id}
-            """
-
-        await session.execute(text(sql_text))
-        await session.commit()
-        return body.id
+                    id = {meeting.id}
+                """
+            await save_request(update_request, session)
+            logger.info(f'meeting {meeting.id} updated')
+            return f'updated meeting id: {meeting.id}'
+        else: return 'this meeting does not exist or has been deleted'
     except Exception as ex:
         logger.info(ex)
+        return f'exception: {ex}'
 
 
 @app.get("/api/delete/{meeting_id}")
@@ -150,6 +154,17 @@ async def create_table(session: AsyncSession = Depends(get_session)):
         await session.commit()
     except Exception as ex:
         logger.info(ex)
+
+
+async def get_request(sql_text, session):
+    response = await session.execute(text(sql_text))
+    await session.commit()
+    return response.all()
+
+
+async def save_request(sql_text, session):
+    await session.execute(text(sql_text))
+    await session.commit()
 
 if __name__ == "__main__":
     uvicorn.run('server:app', port=8080, reload=True)
