@@ -1,6 +1,8 @@
 import logging
 import uvicorn
+import time
 
+from datetime import datetime
 from fastapi import FastAPI, Request
 from pydantic import BaseSettings
 from sqlalchemy import text
@@ -8,6 +10,7 @@ from fastapi.param_functions import Depends
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm.session import sessionmaker
 from sqlalchemy.ext.asyncio import engine
+# todo logging
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,48 +43,86 @@ async def get_session() -> AsyncSession:
 
 @app.post("/api/create")
 async def create(request: Request, session: AsyncSession = Depends(get_session)):
+    body = await request.json()
     sql_text = f"""
-            select * from meetings
+            insert into meetings (name, start_time, end_time, emails)
+            values 
+            ('{body['name']}', 
+            '{datetime.fromtimestamp(time.mktime(time.gmtime()))}', 
+            '{datetime.fromtimestamp(time.mktime(time.gmtime()))}',
+            "{body['emails']}")
+            returning id;
         """
-    sql_text = text(sql_text)
-    try:
-        res = await session.execute(sql_text)
-        await session.commit()
-        logger.info(res.all())
-        return await request.json()
-    except Exception as ex:
-        logger.info(ex)
+
+    meeting_id = await session.execute(text(sql_text))
+    await session.commit()
+    return meeting_id.all()
 
 
-@app.get("/api/update/{meeting_id}")
-async def update(meeting_id: int, request: Request, session: AsyncSession = Depends(get_session)):
-    # Метод изменяет все данные встречи по ее уникальному идентификатору.
+@app.post("/api/update")
+async def update(request: Request, session: AsyncSession = Depends(get_session)):
+    body = await request.json()
     sql_text = f"""
-            select * from meetings
+            UPDATE meetings
+            SET 
+                name='{body['name']}', 
+                start_time='{body['start_time']}', 
+                end_time='{body['end_time']}', 
+                emails="{body['emails']}"
+            WHERE
+                id = {body['id']}
         """
-    sql_text = text(sql_text)
-    try:
-        res = await session.execute(sql_text)
-        await session.commit()
-        logger.info(res.all())
-        return await request.json()
-    except Exception as ex:
-        logger.info(ex)
+
+    await session.execute(text(sql_text))
+    await session.commit()
+    return body['id']
 
 
-@app.get("/api/delete")
+@app.get("/api/delete/{meeting_id}")
 async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
-    return meeting_id
+    # todo удалить то, чего нет))
+    try:
+        await session.execute(text(f"""DELETE FROM meetings WHERE id = {meeting_id}"""))
+        await session.commit()
+        return meeting_id
+    except Exception as ex:
+        logger.info(ex)
 
 
 @app.get("/api/select/{meeting_id}")
 async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
-    return meeting_id
+    try:
+        meeting_data = await session.execute(text(f"""select * from meetings where id = {meeting_id}"""))
+        await session.commit()
+        return meeting_data.all()
+    except Exception as ex:
+        logger.info(ex)
 
 
 @app.get("/api/select")
 async def select(session: AsyncSession = Depends(get_session)):
-    return 400
+    # todo - нагрузка
+    try:
+        meeting_data = await session.execute(text(f"""select * from meetings"""))
+        await session.commit()
+        return meeting_data.all()
+    except Exception as ex:
+        logger.info(ex)
+
+
+@app.get("/api/create_table")
+async def create_table(session: AsyncSession = Depends(get_session)):
+    sql_text = f"""
+                CREATE TABLE meetings (
+                    id integer PRIMARY KEY,
+                    name text NOT NULL,
+                    start_time datatime NOT NULL,
+                    end_time datatime NOT NULL,
+                    emails text NOT NULL
+                )
+            """
+    await session.execute(text(sql_text))
+    await session.commit()
 
 
 if __name__ == "__main__":
