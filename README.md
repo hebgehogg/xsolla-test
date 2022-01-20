@@ -65,7 +65,7 @@ python client.py --api-root=localhost:8080/api create data.json
 ```
 
 
-###№ select:
+### select:
 Общий select который выводит по 10 объектов все что есть в таблице
 ```python
 python client.py select
@@ -76,7 +76,7 @@ python client.py select 4
 ```
 Возвращает объект/объекты
 
-###№ create:
+### create:
 Указание метода и файла
 ```python
 python client.py update update_data.json
@@ -84,7 +84,7 @@ python client.py update update_data.json
 Возвращает id
 
 
-###№ update:
+### update:
 Указание метода и файла
 ```python
 python client.py create data.json
@@ -92,7 +92,7 @@ python client.py create data.json
 Возвращает id
 
 
-###№ delete:
+### delete:
 Указание метода и объекта который требуется удалить
 ```python
 python client.py delete 4
@@ -100,7 +100,7 @@ python client.py delete 4
 Возвращает id
 
 
-###№ create_table:
+### create_table:
 Для теста было создано. Если потребуется обновить бд можно ее удалить и пересоздать так таблицу
 ```python
 python client.py create_table
