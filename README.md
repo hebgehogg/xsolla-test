@@ -19,7 +19,7 @@
 - Telegram: @hebgehog
 
 
-<a name="libraries"><h3>libraries</h3></a>  
+<a name="libraries"><h2>libraries</h2></a>  
 
 Для установки библиотек используйте команду:
 ```python
