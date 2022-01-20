@@ -9,8 +9,7 @@
 [database](#database)  
 [commands](#commands)  
 
-<a name="contacts"><h2>contacts</task></a>  
-
+<a name="contacts"><h2>contacts</h2></a>  
 
 - Овчинникова Алина Владимировна
 - hebgehogg@gmail.com
