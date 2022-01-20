@@ -24,6 +24,7 @@ pip install -r requirements.txt
 <a name="environment"><h2>environment</task></a>  
 
 Перед запуском создайте файл `.env`. 
+
 В него вставить настройку бд (добавила для примера)
 ```python
 SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
@@ -32,7 +33,10 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 
 <a name="database"><h2>database</h2></a> 
 
-meetings
+Посредством Sqlite была добавлена одна таблица `meetings`. 
+Ниже описаны поля и их типы.
+
+> Подразумевается что emails массив
 | column | type |
 | --- | --- |
 | id | integer primary key |
@@ -44,9 +48,66 @@ meetings
 
 <a name="commands"><h2>commands</h2></a>  
 
-python client.py —api-root=localhost:8080/api/ create data.json
+### Порядок запуска:
+* Запуск server.py (uvicorn запустится автоматически)
+* Через терминал введите одну из коммед 
 
-python client.py update 2
+команда может состоять из указания `корневого адреса API` (не обязательно), `функции` и `параметра` (не обязательно)
+
+###№ create:
+Указание метода и файла
+```python
+python client.py create data.json
+```
+Можно также добавить путь (в любой метод)
+```python
+python client.py --api-root=localhost:8080/api create data.json
+```
 
 
-<a name="task"><h2>database</task></a>. 
+###№ select:
+Общий select который выводит по 10 объектов все что есть в таблице
+```python
+python client.py select
+```
+Select по id
+```python
+python client.py select 4
+```
+Возвращает объект/объекты
+
+###№ create:
+Указание метода и файла
+```python
+python client.py update update_data.json
+```
+Возвращает id
+
+
+###№ update:
+Указание метода и файла
+```python
+python client.py create data.json
+```
+Возвращает id
+
+
+###№ delete:
+Указание метода и объекта который требуется удалить
+```python
+python client.py delete 4
+```
+Возвращает id
+
+
+###№ create_table:
+Для теста было создано. Если потребуется обновить бд можно ее удалить и пересоздать так таблицу
+```python
+python client.py create_table
+```
+
+
+<a name="task"><h2>task</h2></a>
+
+
+# Все файлы из примеров добавлены в проект
