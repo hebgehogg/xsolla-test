@@ -106,8 +106,8 @@ python client.py delete 4
 python client.py create_table
 ```
 
+# Все файлы из примеров добавлены в проект
 
 <a name="task"><h2>task</h2></a>
+![ТЗ](https://github.com/hebgehogg/xsolla_test/blob/master/tz.pdf)
 
-
-# Все файлы из примеров добавлены в проект
