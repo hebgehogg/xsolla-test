@@ -10,8 +10,8 @@
 [libraries](#libraries)  
 [environment](#environment)  
 [database](#database)  
-[commands](#commands) 
-[task](#task) 
+[commands](#commands)  
+[task](#task)  
 
 
 <a name="libraries"><h2>libraries</task></a>  
