@@ -115,6 +115,7 @@ Select по id
 python client.py select 4
 ```
 Метод возвращает объект/объекты
+![Пример](https://github.com/hebgehogg/xsolla_test/blob/master/files/example.png)
 
 ---
 
