@@ -164,7 +164,8 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
 
             logger.info(f'meeting {meeting.id} updated')
             return f'meeting updated by id = {meeting.id}'
-        else: return 'this meeting does not exist or has been deleted'
+        else:
+            return 'this meeting does not exist or has been deleted'
     except Exception as ex:
         logger.info(ex)
         return f'exception: {ex}'
@@ -184,7 +185,8 @@ async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
 
             logger.info(f'meeting {meeting_id} deleted')
             return f'meeting deleted by id = {meeting_id}'
-        else: return 'this meeting does not exist or has been deleted'
+        else:
+            return 'this meeting does not exist or has been deleted'
     except Exception as ex:
         logger.info(ex)
         return f'exception: {ex}'
@@ -246,7 +248,8 @@ async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
         await session.commit()
         try:
             meeting = meeting.one()
-        except: return 'this meeting does not exist or has been deleted'
+        except:
+            return 'this meeting does not exist or has been deleted'
 
         result = {
             'name': meeting.name,
