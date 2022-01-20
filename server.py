@@ -73,6 +73,7 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
                 """
             response = await session.execute(text(check_request))
             await session.commit()
+            user_id = None
             try:
                 user_response = response.one()
                 user_id = user_response.id
@@ -135,8 +136,13 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
                                 """
                 response = await session.execute(text(check_request))
                 await session.commit()
-                user_response = response.one()
-                user_id = user_response.id
+                user_id = None
+                try:
+                    user_response = response.one()
+                    user_id = user_response.id
+                except:
+                    pass
+
                 if not user_id:
                     create_request = f"""
                                         INSERT INTO users (email)
@@ -151,8 +157,8 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
                 create_request = f"""
                                     INSERT INTO meeting_users (user_id, meeting_id)
                                     VALUES 
-                                    ('{meeting.id}', 
-                                    '{user_id}')
+                                    ('{user_id}', 
+                                    '{meeting.id}')
                                 """
                 await save_request(create_request, session)
 
