@@ -11,24 +11,28 @@ python client.py —api-root=localhost:8080/api/ create data.json
 python client.py update 2
 
 
-meetings
+
+
+python client.py —api-root=localhost:8080/api/ create data.json
+
+- Овчинникова Алина Владимировна
+- hebgehogg@gmail.com
+- тел: +7(950) 446-12-02
+- Telegram: @hebgehog
+
+##### Content 
+[task](#task)  
+[libraries](#libraries)  
+[environment](#environment)  
+[database](#database)  
+[commands](#commands) 
+
+
+<a name="database"><h2>database</h2></a>
+* meetings
 
 id integer primary key          
 name text          
 start_time datatime           
-end_time datatime          
-
-
-members
-
-id integer primary key         
-user_id integer        
-meeting_id integer         
-
-users
-
-id integer primary key           
-email text
-
-
-python client.py —api-root=localhost:8080/api/ create data.json
+end_time datatime             
+emails text
