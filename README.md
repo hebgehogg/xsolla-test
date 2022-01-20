@@ -16,14 +16,14 @@
 - Telegram: @hebgehog
 
 
-<a name="libraries"><h2>libraries</task></a>  
+<a name="libraries"><h3>libraries</h3></a>  
 
 Для установки библиотек используйте команду:
 ```python
 pip install -r requirements.txt
 ```
 
-<a name="environment"><h2>environment</task></a>  
+<a name="environment"><h3>environment</h3></a>  
 
 Перед запуском создайте файл `.env`. 
 
@@ -33,7 +33,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 ```
 
 
-<a name="database"><h2>database</h2></a> 
+<a name="database"><h3>database</h3></a> 
 
 Посредством Sqlite была добавлена одна таблица `meetings`. 
 Ниже описаны поля и их типы.
@@ -49,7 +49,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 | emails | text |
 
 
-<a name="commands"><h2>commands</h2></a>  
+<a name="commands"><h3>commands</h3></a>  
 
 ### Порядок запуска:
 * Запуск server.py (uvicorn запустится автоматически)
