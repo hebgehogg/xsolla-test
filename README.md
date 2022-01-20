@@ -26,7 +26,7 @@
 pip install -r requirements.txt
 ```
 
-<a name="environment"><h3>environment</h3></a>  
+<a name="environment"><h2>environment</h2></a>
 
 Перед запуском создайте файл `.env`. 
 
@@ -35,8 +35,7 @@ pip install -r requirements.txt
 SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 ```
 
-
-<a name="database"><h3>database</h3></a> 
+<a name="database"><h2>database</h2></a>
 
 Посредством Sqlite была добавлена одна таблица `meetings`. 
 Ниже описаны поля и их типы.
@@ -52,7 +51,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 | emails | text |
 
 
-<a name="commands"><h3>commands</h3></a>  
+<a name="commands"><h2>commands</h2></a>  
 
 > Порядок запуска:
 > 1. Запуск server.py (uvicorn запустится автоматически)
