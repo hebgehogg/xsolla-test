@@ -15,11 +15,34 @@ class ConsoleInterface:
         self.args = args
 
     async def create(self):
-        with open(self.args.parameter) as json_file:
-            file = json.load(json_file)
+        try:
+            with open(self.args.parameter) as json_file:
+                file = json.load(json_file)
+        except:
+            return 'Invalid file path'
         async with aiohttp.ClientSession() as client:
             async with client.post(f'{self.base_root}/{self.args.function}', json=file) as response:
-                return await response.json()
+                status_code = response.status
+                res = await response.json()
+        if status_code == 422:
+            return 'Invalid file format or structure'
+        else:
+            return res
+
+    async def update(self):
+        try:
+            with open(self.args.parameter) as json_file:
+                file = json.load(json_file)
+        except:
+            return 'Invalid file path'
+        async with aiohttp.ClientSession() as client:
+            async with client.put(f'{self.base_root}/{self.args.function}', json=file) as response:
+                status_code = response.status
+                res = await response.json()
+            if status_code == 422:
+                return 'Invalid file format or structure'
+            else:
+                return res
 
     async def select(self):
         if self.args.parameter is not None:
@@ -35,13 +58,7 @@ class ConsoleInterface:
                 async with aiohttp.ClientSession() as client:
                     async with client.get(f'{self.base_root}/{self.args.function}/select_all/{offset}') as response:
                         print(await response.json())
-
-    async def update(self):
-        with open(self.args.parameter) as json_file:
-            file = json.load(json_file)
-        async with aiohttp.ClientSession() as client:
-            async with client.put(f'{self.base_root}/{self.args.function}', json=file) as response:
-                return await response.json()
+                        return 'Finish'
 
     async def delete(self):
         async with aiohttp.ClientSession() as client:
