@@ -156,5 +156,4 @@ python client.py create_table
 ```
 
 #### Все файлы (`data.json - для create` и `update_data.json - для update`) из примеров добавлены в проект
-#### Ошибки обработаны 
 
