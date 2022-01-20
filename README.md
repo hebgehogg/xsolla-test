@@ -37,7 +37,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 
 <a name="database"><h2>database</h2></a>
 
-Посредством Sqlite были созданы таблицы `meetings`, `users`, `eeting_user`.
+Посредством Sqlite были созданы таблицы `meetings`, `users`, `meeting_user`.
 
 Был выбран именно такой вариант реализации тк это более нормализованная форма чем создание одной таблицы meetings с текстовым полем emails.
 
