@@ -44,6 +44,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 Это нужно для того, чтобы при аналитике (такая изначально стояла задача) можно было более быстро проверить какие пользователи были на встрече.
 
 Ниже описаны поля и их типы.
+
 ![Схема](https://github.com/hebgehogg/xsolla_test/blob/master/files/schema.jpeg)
 
 > meetings  
@@ -114,7 +115,8 @@ Select по id
 ```python
 python client.py select 4
 ```
-Метод возвращает объект/объекты
+Метод возвращает объект/объекты (ниже пример попытки посмотреть объект которого нет и считывание 1 элемента)
+
 ![Пример](https://github.com/hebgehogg/xsolla_test/blob/master/files/example.png)
 
 ---
