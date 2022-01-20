@@ -53,10 +53,10 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 * Запуск server.py (uvicorn запустится автоматически)
 * Через терминал введите одну из коммед 
 
-команда может состоять из указания `корневого адреса API` (не обязательно), `функции` и `параметра` (не обязательно)
+> Команда может состоять из указания `корневого адреса API` (не обязательно), `функции` и `параметра` (не обязательно)
 
 ### create:
-Указание метода и файла
+Указание метода и файла.
 ```python
 python client.py create data.json
 ```
@@ -68,7 +68,7 @@ python client.py --api-root=localhost:8080/api create data.json
 ---
 
 ### select:
-Общий select который выводит по 10 объектов все что есть в таблице
+Общий select который выводит по 10 объектов все что есть в таблице.
 ```python
 python client.py select
 ```
@@ -81,7 +81,7 @@ python client.py select 4
 ---
 
 ### create:
-Указание метода и файла
+Указание метода и файла.
 ```python
 python client.py update update_data.json
 ```
@@ -91,7 +91,7 @@ python client.py update update_data.json
 
 
 ### update:
-Указание метода и файла
+Указание метода и файла.
 ```python
 python client.py create data.json
 ```
@@ -101,7 +101,7 @@ python client.py create data.json
 
 
 ### delete:
-Указание метода и объекта который требуется удалить
+Указание метода и объекта который требуется удалить.
 ```python
 python client.py delete 4
 ```
@@ -110,7 +110,7 @@ python client.py delete 4
 ---
 
 ### create_table:
-Для теста было создано. Если потребуется обновить бд можно ее удалить и пересоздать так таблицу
+Для теста было создано. Если потребуется обновить бд можно ее удалить и пересоздать так таблицу.
 ```python
 python client.py create_table
 ```
@@ -118,5 +118,6 @@ python client.py create_table
 # Все файлы из примеров добавлены в проект
 
 <a name="task"><h2>task</h2></a>
+
 ![ТЗ](https://github.com/hebgehogg/xsolla_test/blob/master/tz.pdf)
 
