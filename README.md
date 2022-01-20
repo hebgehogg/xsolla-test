@@ -80,19 +80,29 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 
 Команда может состоять из указания `корневого адреса API` (не обязательно), `функции` и `параметра` (не обязательно)
 
-### create:
+> create:
 Указание метода и файла.
 ```python
 python client.py create data.json
 ```
-Можно также добавить путь (в любой метод)
+Можно также добавить root (в любой метод)
 ```python
 python client.py --api-root=localhost:8080/api create data.json
 ```
+Пример тела запроса (файла):
+```json
+{
+  "name": "meeting 1",
+  "start_time": "2022-01-19 17:00:31",
+  "end_time": "2022-01-19 17:00:31",
+  "emails": ["hebgehogg@gmail.com", "avovchinnikova_1@edu.hse.ru"]
+}
+```
+Метод возвращает id
 
 ---
 
-### select:
+> select:
 Общий select который выводит по 10 объектов все что есть в таблице.
 ```python
 python client.py select
@@ -101,31 +111,36 @@ Select по id
 ```python
 python client.py select 4
 ```
-Возвращает объект/объекты
-
----
-
-### create:
-Указание метода и файла.
-```python
-python client.py update update_data.json
-```
-Возвращает id
+Метод возвращает объект/объекты
 
 ---
 
 
 ### update:
-Указание метода и файла.
+Указание метода и json файла.
+`Важно!` id указывается в json
+
 ```python
-python client.py create data.json
+python client.py update update_data.json
 ```
-Возвращает id
+Пример тела запроса (файла):
+```json
+{
+  "id": 3,
+  "name": "meeting 3",
+  "start_time": "2022-01-19 17:00:31",
+  "end_time": "2022-01-19 17:00:31",
+  "emails": [ "hebgehogg@gmail.com", "avovchinnikova_1@edu.hse.ru"]
+}
+```
+Проверки на наличие элемента есть - в других методах аналогчно  
+
+Метод возвращает id
 
 ---
 
 
-### delete:
+> delete:
 Указание метода и объекта который требуется удалить.
 ```python
 python client.py delete 4
@@ -134,11 +149,12 @@ python client.py delete 4
 
 ---
 
-### create_table:
-Для теста было создано. Если потребуется обновить бд можно ее удалить и пересоздать так таблицу.
+> create_table:
+Метод был создан для теста. Если потребуется обновить бд можно ее удалить и пересоздать так таблицы.
 ```python
 python client.py create_table
 ```
 
-# Все файлы из примеров добавлены в проект
+#### Все файлы (`data.json - для create` и `update_data.json - для update`) из примеров добавлены в проект
+#### Ошибки обработаны 
 
