@@ -111,6 +111,9 @@ python client.py --api-root=localhost:8080/api create data.json
 ```python
 python client.py select
 ```
+![Пример](https://github.com/hebgehogg/xsolla_test/blob/master/files/example_all.png)
+
+
 Select по id
 ```python
 python client.py select 4
