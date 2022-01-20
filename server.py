@@ -71,7 +71,14 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
                 SELECT id FROM users
                 WHERE email = '{email}'
                 """
-            user_id = await get_request(check_request, session)
+            response = await session.execute(text(check_request))
+            await session.commit()
+            try:
+                user_response = response.one()
+                user_id = user_response.id
+            except:
+                pass
+
             if not user_id:
                 create_request = f"""
                         INSERT INTO users (email)
@@ -86,8 +93,8 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
             create_request = f"""
                     INSERT INTO meeting_users (user_id, meeting_id)
                     VALUES 
-                    ('{meeting_id}', 
-                    '{user_id}')
+                    ('{user_id}', 
+                    '{meeting_id}')
                 """
             await save_request(create_request, session)
 
@@ -217,6 +224,7 @@ async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
                                                 """))
         await session.commit()
         users = users.all()
+        print(users)
         for user in users:
             result[user.meeting_id]['users'].append(user.email)
 
@@ -229,10 +237,30 @@ async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
 @app.get("/api/select/{meeting_id}")
 async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
     try:
-        select_request = f'SELECT * FROM meetings WHERE id = {meeting_id}'
-        meeting = await get_request(select_request, session)
+        meeting = await session.execute(text(f'SELECT * FROM meetings WHERE id = {meeting_id}'))
+        await session.commit()
+        meeting = meeting.one()
+
+        result = {
+            'name': meeting.name,
+            'start_time': meeting.start_time,
+            'end_time': meeting.end_time,
+            'users': []
+        }
+
+        users = await session.execute(text(f"""select u.email
+                                                  from meeting_users mu
+                                                  join users u
+                                                    on u.id = mu.user_id
+                                                    where mu.meeting_id = {meeting.id}
+                                                """))
+        await session.commit()
+        users = users.all()
+        for user in users:
+            result['users'].append(user.email)
+
         logger.info(f'meeting {meeting_id} showed')
-        return meeting
+        return result
     except Exception as ex:
         logger.info(ex)
         return f'exception: {ex}'
