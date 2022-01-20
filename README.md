@@ -15,14 +15,17 @@
 
 
 <a name="libraries"><h2>libraries</task></a>
+Для установки библиотек используйте команду:
 ```python
 pip install -r requirements.txt
 ```
 
 <a name="environment"><h2>environment</task></a>
-
-.env 
+Перед запуском создайте файл `.env`
+В него вставить настройку бд (добавила для примера)
+```python
 SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
+```
 
 
 <a name="database"><h2>database</h2></a>
