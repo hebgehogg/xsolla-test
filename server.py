@@ -181,7 +181,9 @@ async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
 async def select_count(session: AsyncSession = Depends(get_session)):
     try:
         count_request = f'SELECT count(*) FROM meetings'
-        count = await get_request(count_request, session)
+        response = await session.execute(text(count_request))
+        await session.commit()
+        count = response.one()
         return count
     except Exception as ex:
         logger.info(ex)
@@ -191,9 +193,34 @@ async def select_count(session: AsyncSession = Depends(get_session)):
 @app.get("/api/select/select_all/{offset}")
 async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
     try:
+        meetings_ids = ''
         meetings = await session.execute(text(f'SELECT * FROM meetings LIMIT 10 OFFSET {offset}'))
         await session.commit()
-        return meetings.all()
+        meetings = meetings.all()
+
+        result = {}
+
+        for meeting in meetings:
+            result[meeting.id] = {
+                'name': meeting.name,
+                'start_time': meeting.start_time,
+                'end_time': meeting.end_time,
+                'users': []
+            }
+            meetings_ids += f'{meeting.id},'
+
+        users = await session.execute(text(f"""select mu.meeting_id, u.email
+                                                  from meeting_users mu
+                                                  join users u
+                                                    on u.id = mu.user_id
+                                                    where mu.meeting_id in ({meetings_ids[:-1]})
+                                                """))
+        await session.commit()
+        users = users.all()
+        for user in users:
+            result[user.meeting_id]['users'].append(user.email)
+
+        return result
     except Exception as ex:
         logger.info(ex)
         return f'exception: {ex}'
