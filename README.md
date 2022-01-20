@@ -80,7 +80,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 
 Команда может состоять из указания `корневого адреса API` (не обязательно), `функции` и `параметра` (не обязательно)
 
-#### create:
+### create:
 Указание метода и файла.
 ```python
 python client.py create data.json
@@ -102,7 +102,7 @@ python client.py --api-root=localhost:8080/api create data.json
 
 ---
 
-#### select:
+### select:
 Общий select который выводит по 10 объектов все что есть в таблице.
 ```python
 python client.py select
@@ -116,7 +116,7 @@ python client.py select 4
 ---
 
 
-#### update:
+### update:
 Указание метода и json файла.
 `Важно!` id указывается в json
 
@@ -140,7 +140,7 @@ python client.py update update_data.json
 ---
 
 
-#### delete:
+### delete:
 Указание метода и объекта который требуется удалить.
 ```python
 python client.py delete 4
@@ -149,7 +149,7 @@ python client.py delete 4
 
 ---
 
-#### create_table:
+### create_table:
 Метод был создан для теста. Если потребуется обновить бд можно ее удалить и пересоздать так таблицы.
 ```python
 python client.py create_table
