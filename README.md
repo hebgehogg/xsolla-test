@@ -64,6 +64,7 @@ python client.py create data.json
 ```python
 python client.py --api-root=localhost:8080/api create data.json
 ```
+
 ---
 
 ### select:
@@ -76,6 +77,7 @@ Select по id
 python client.py select 4
 ```
 Возвращает объект/объекты
+
 ---
 
 ### create:
@@ -84,6 +86,7 @@ python client.py select 4
 python client.py update update_data.json
 ```
 Возвращает id
+
 ---
 
 
@@ -93,6 +96,7 @@ python client.py update update_data.json
 python client.py create data.json
 ```
 Возвращает id
+
 ---
 
 
@@ -102,6 +106,7 @@ python client.py create data.json
 python client.py delete 4
 ```
 Возвращает id
+
 ---
 
 ### create_table:
