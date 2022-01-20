@@ -60,7 +60,11 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
                 '{meeting.end_time}')
                 returning id;
             """
-        meeting_id = await get_request(create_request, session)
+
+        response = await session.execute(text(create_request))
+        await session.commit()
+        meeting_response = response.one()
+        meeting_id = meeting_response.id
 
         for email in meeting.emails:
             check_request = f"""
@@ -74,7 +78,10 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
                         VALUES ('{email}')
                         returning id;
                     """
-                user_id = await get_request(create_request, session)
+                response = await session.execute(text(create_request))
+                await session.commit()
+                user_response = response.one()
+                user_id = user_response.id
 
             create_request = f"""
                     INSERT INTO meeting_users (user_id, meeting_id)
@@ -105,12 +112,43 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
                 SET 
                     name='{meeting.name}', 
                     start_time='{meeting.start_time}', 
-                    end_time='{meeting.end_time}', 
-                    emails="{meeting.emails}"
+                    end_time='{meeting.end_time}'
                 WHERE
                     id = {meeting.id}
                 """
             await save_request(update_request, session)
+
+            delete_users = f'DELETE FROM meeting_users WHERE meeting_id = {meeting.id}'
+            await save_request(delete_users, session)
+
+            for email in meeting.emails:
+                check_request = f"""
+                                SELECT id FROM users
+                                WHERE email = '{email}'
+                                """
+                response = await session.execute(text(check_request))
+                await session.commit()
+                user_response = response.one()
+                user_id = user_response.id
+                if not user_id:
+                    create_request = f"""
+                                        INSERT INTO users (email)
+                                        VALUES ('{email}')
+                                        returning id;
+                                    """
+                    response = await session.execute(text(create_request))
+                    await session.commit()
+                    user_response = response.one()
+                    user_id = user_response.id
+
+                create_request = f"""
+                                    INSERT INTO meeting_users (user_id, meeting_id)
+                                    VALUES 
+                                    ('{meeting.id}', 
+                                    '{user_id}')
+                                """
+                await save_request(create_request, session)
+
             logger.info(f'meeting {meeting.id} updated')
             return f'meeting updated by id = {meeting.id}'
         else: return 'this meeting does not exist or has been deleted'
