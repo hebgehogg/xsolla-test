@@ -53,15 +53,37 @@ async def get_session() -> AsyncSession:
 async def create(meeting: Meeting, session: AsyncSession = Depends(get_session)):
     try:
         create_request = f"""
-                INSERT INTO meetings (name, start_time, end_time, emails)
+                INSERT INTO meetings (name, start_time, end_time)
                 VALUES 
                 ('{meeting.name}', 
                 '{meeting.start_time}', 
-                '{meeting.end_time}',
-                "{meeting.emails}")
+                '{meeting.end_time}')
                 returning id;
             """
         meeting_id = await get_request(create_request, session)
+
+        for email in meeting.emails:
+            check_request = f"""
+                SELECT id FROM users
+                WHERE email = '{email}'
+                """
+            user_id = await get_request(check_request, session)
+            if not user_id:
+                create_request = f"""
+                        INSERT INTO users (email)
+                        VALUES ('{email}')
+                        returning id;
+                    """
+                user_id = await get_request(create_request, session)
+
+            create_request = f"""
+                    INSERT INTO meeting_users (user_id, meeting_id)
+                    VALUES 
+                    ('{meeting_id}', 
+                    '{user_id}')
+                """
+            await save_request(create_request, session)
+
         logger.info(f'meeting {meeting_id} created')
         return f'meeting_id = {meeting_id}'
     except Exception as ex:
@@ -69,7 +91,7 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
         return f'exception: {ex}'
 
 
-@app.post("/api/update")
+@app.post("/api/update", status_code=201)
 async def update(meeting: Meeting, session: AsyncSession = Depends(get_session)):
     try:
         check_request = f"""
@@ -150,16 +172,32 @@ async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
 @app.get("/api/create_table")
 async def create_table(session: AsyncSession = Depends(get_session)):
     try:
-        create_table_request = f"""
+        create_meetings = f"""
                     CREATE TABLE meetings (
                         id integer PRIMARY KEY,
                         name text NOT NULL,
                         start_time datatime NOT NULL,
-                        end_time datatime NOT NULL,
-                        emails text NOT NULL
+                        end_time datatime NOT NULL
                     )
                 """
-        await save_request(create_table_request, session)
+        await save_request(create_meetings, session)
+
+        create_users = f"""
+                    CREATE TABLE users (
+                        id integer PRIMARY KEY,
+                        email text NOT NULL
+                    )
+                """
+        await save_request(create_users, session)
+
+        create_meeting_users = f"""
+                    CREATE TABLE meeting_users (
+                        user_id integer NOT NULL,
+                        meeting_id integer NOT NULL
+                    )
+                """
+        await save_request(create_meeting_users, session)
+
         return 'table meetings created'
     except Exception as ex:
         logger.info(ex)
@@ -169,7 +207,7 @@ async def create_table(session: AsyncSession = Depends(get_session)):
 async def get_request(sql_text, session):
     response = await session.execute(text(sql_text))
     await session.commit()
-    return response.one()
+    return response.all()
 
 
 async def save_request(sql_text, session):
