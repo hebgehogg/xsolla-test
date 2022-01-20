@@ -1,17 +1,19 @@
 # Тестовое задание в Xsolla
-> Цель: реализовать приложение для управления встречами в компании.
-
-- Овчинникова Алина Владимировна
-- hebgehogg@gmail.com
-- тел: +7(950) 446-12-02
-- Telegram: @hebgehog
+> Цель: реализовать приложение для управления встречами в компании.  
+Задание: ![ТЗ](https://github.com/hebgehogg/xsolla_test/blob/master/tz.pdf)
 
 ### Content  
+[contacts](#contacts)  
 [libraries](#libraries)  
 [environment](#environment)  
 [database](#database)  
 [commands](#commands)  
-[task](#task)  
+
+<a name="contacts"><h2>contacts</task></a>  
+- Овчинникова Алина Владимировна
+- hebgehogg@gmail.com
+- тел: +7(950) 446-12-02
+- Telegram: @hebgehog
 
 
 <a name="libraries"><h2>libraries</task></a>  
@@ -116,8 +118,4 @@ python client.py create_table
 ```
 
 # Все файлы из примеров добавлены в проект
-
-<a name="task"><h2>task</h2></a>  
-
-![ТЗ](https://github.com/hebgehogg/xsolla_test/blob/master/tz.pdf)
 
