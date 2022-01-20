@@ -127,6 +127,10 @@ async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
         if check:
             delete_request = f'DELETE FROM meetings WHERE id = {meeting_id}'
             await save_request(delete_request, session)
+
+            delete_users = f'DELETE FROM meeting_users WHERE meeting_id = {meeting_id}'
+            await save_request(delete_users, session)
+
             logger.info(f'meeting {meeting_id} deleted')
             return f'meeting deleted by id = {meeting_id}'
         else: return 'this meeting does not exist or has been deleted'
