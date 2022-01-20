@@ -58,7 +58,7 @@ class ConsoleInterface:
                 async with aiohttp.ClientSession() as client:
                     async with client.get(f'{self.base_root}/{self.args.function}/select_all/{offset}') as response:
                         print(await response.json())
-                        return 'Finish'
+            return 'Finish'
 
     async def delete(self):
         async with aiohttp.ClientSession() as client:
