@@ -1,3 +1,6 @@
+# Тестовое задание в Xsolla
+> Цель: реализовать приложение для управления встречами в компании.
+
 - Овчинникова Алина Владимировна
 - hebgehogg@gmail.com
 - тел: +7(950) 446-12-02
@@ -23,7 +26,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 
 
 <a name="database"><h2>database</h2></a>
-<!-- meetings -->
+meetings
 | column | type |
 | --- | --- |
 | id | integer primary key |
