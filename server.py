@@ -106,7 +106,7 @@ async def create(meeting: Meeting, session: AsyncSession = Depends(get_session))
         return f'exception: {ex}'
 
 
-@app.post("/api/update", status_code=201)
+@app.put("/api/update", status_code=201)
 async def update(meeting: Meeting, session: AsyncSession = Depends(get_session)):
     try:
         check_request = f"""
@@ -230,7 +230,6 @@ async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
                                                 """))
         await session.commit()
         users = users.all()
-        print(users)
         for user in users:
             result[user.meeting_id]['users'].append(user.email)
 
@@ -245,7 +244,9 @@ async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
     try:
         meeting = await session.execute(text(f'SELECT * FROM meetings WHERE id = {meeting_id}'))
         await session.commit()
-        meeting = meeting.one()
+        try:
+            meeting = meeting.one()
+        except: return 'this meeting does not exist or has been deleted'
 
         result = {
             'name': meeting.name,

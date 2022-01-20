@@ -17,41 +17,40 @@ class ConsoleInterface:
     async def create(self):
         with open(self.args.parameter) as json_file:
             file = json.load(json_file)
-        item = await self.post_request(f'{self.base_root}/{self.args.function}', file)
-        print(item)
+        async with aiohttp.ClientSession() as client:
+            async with client.post(f'{self.base_root}/{self.args.function}', json=file) as response:
+                return await response.json()
 
     async def select(self):
         if self.args.parameter is not None:
-            item = await self.get_request(f'{self.base_root}/{self.args.function}/{self.args.parameter}')
-            print(item)
+            async with aiohttp.ClientSession() as client:
+                async with client.get(f'{self.base_root}/{self.args.function}/{self.args.parameter}') as response:
+                    return await response.json()
         else:
-            count = await self.get_request(f'{self.base_root}/{self.args.function}/select_count')
+            async with aiohttp.ClientSession() as client:
+                async with client.get(f'{self.base_root}/{self.args.function}/select_count') as response:
+                    count = await response.json()
+            # с шагом 10
             for offset in range(0, count['count(*)'], 10):
-                meetings = await self.get_request(f'{self.base_root}/{self.args.function}/select_all/{offset}')
-                print(meetings)
+                async with aiohttp.ClientSession() as client:
+                    async with client.get(f'{self.base_root}/{self.args.function}/select_all/{offset}') as response:
+                        print(await response.json())
 
     async def update(self):
         with open(self.args.parameter) as json_file:
             file = json.load(json_file)
-        item = await self.post_request(f'{self.base_root}/{self.args.function}', file)
-        print(item)
-
-    async def delete(self):
-        result = await self.get_request(f'{self.base_root}/{self.args.function}/{args.parameter}')
-        print(result)
-
-    async def create_table(self):
-        result = await self.get_request(f'{self.base_root}/{self.args.function}')
-        print(result)
-
-    async def post_request(self, url, file):
         async with aiohttp.ClientSession() as client:
-            async with client.post(url, json=file) as response:
+            async with client.put(f'{self.base_root}/{self.args.function}', json=file) as response:
                 return await response.json()
 
-    async def get_request(self, url):
+    async def delete(self):
         async with aiohttp.ClientSession() as client:
-            async with client.get(url) as response:
+            async with client.delete(f'{self.base_root}/{self.args.function}/{self.args.parameter}') as response:
+                return await response.json()
+
+    async def create_table(self):
+        async with aiohttp.ClientSession() as client:
+            async with client.get(f'{self.base_root}/{self.args.function}') as response:
                 return await response.json()
 
 
@@ -60,7 +59,8 @@ async def main():
     base_root = f'http://{args.api_root}'
 
     console_interface = ConsoleInterface(base_root, args)
-    await call_method(console_interface, args.function)
+    result = await call_method(console_interface, args.function)
+    print(result)
 
 
 async def call_method(o, name):
