@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 <a name="environment"><h2>environment</task></a>.  
 
-Перед запуском создайте файл `.env`
+Перед запуском создайте файл `.env`. 
 В него вставить настройку бд (добавила для примера)
 ```python
 SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
