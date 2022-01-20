@@ -36,7 +36,8 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 Посредством Sqlite была добавлена одна таблица `meetings`. 
 Ниже описаны поля и их типы.
 
-> Подразумевается что emails массив
+> Подразумевается что emails массив. 
+
 | column | type |
 | --- | --- |
 | id | integer primary key |
