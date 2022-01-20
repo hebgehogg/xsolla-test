@@ -38,8 +38,11 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 <a name="database"><h2>database</h2></a>
 
 Посредством Sqlite были созданы таблицы `meetings`, `users`, `eeting_user`.
-Был выбран именно такой вариант реализации тк это более нормализованная форма чем создание 1 таблицы meetings с текстовым полем emails.
+
+Был выбран именно такой вариант реализации тк это более нормализованная форма чем создание одной таблицы meetings с текстовым полем emails.
+
 Это нужно для того, чтобы при аналитике (такая изначально стояла задача) можно было более быстро проверить какие пользователи были на встрече.
+
 Ниже описаны поля и их типы.
 
 > meetings. 
@@ -53,7 +56,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 | emails | text NOT NULL|
 
 
-> users. 
+> users  
 
 | column | type |
 | --- | --- |
