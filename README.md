@@ -54,7 +54,7 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 
 команда может состоять из указания `корневого адреса API` (не обязательно), `функции` и `параметра` (не обязательно)
 
-###№ create:
+### create:
 Указание метода и файла
 ```python
 python client.py create data.json
