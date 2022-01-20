@@ -8,7 +8,6 @@ parser.add_argument('--api-root', help='select app root', default='localhost:808
 parser.add_argument('function', choices=['create', 'select', 'update', 'delete', 'create_table'])
 parser.add_argument('parameter', nargs='?')
 
-# python client.py —api-root=localhost:8080/api/ select 2
 
 args = parser.parse_args()
 

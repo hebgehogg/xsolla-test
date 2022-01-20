@@ -53,8 +53,8 @@ async def get_session() -> AsyncSession:
 async def create(meeting: Meeting, session: AsyncSession = Depends(get_session)):
     try:
         create_request = f"""
-                insert into meetings (name, start_time, end_time, emails)
-                values 
+                INSERT INTO meetings (name, start_time, end_time, emails)
+                VALUES 
                 ('{meeting.name}', 
                 '{meeting.start_time}', 
                 '{meeting.end_time}',
@@ -100,10 +100,7 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
 @app.get("/api/delete/{meeting_id}")
 async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
     try:
-        check_request = f"""
-                    SELECT * FROM meetings
-                    WHERE id = {meeting_id}
-                    """
+        check_request = f'SELECT * FROM meetings WHERE id = {meeting_id}'
         check = await get_request(check_request, session)
         if check:
             delete_request = f'DELETE FROM meetings WHERE id = {meeting_id}'
@@ -141,7 +138,7 @@ async def select_all(offset: int, session: AsyncSession = Depends(get_session)):
 @app.get("/api/select/{meeting_id}")
 async def select(meeting_id: int, session: AsyncSession = Depends(get_session)):
     try:
-        select_request = f'select * from meetings where id = {meeting_id}'
+        select_request = f'SELECT * FROM meetings WHERE id = {meeting_id}'
         meeting = await get_request(select_request, session)
         logger.info(f'meeting {meeting_id} showed')
         return meeting
