@@ -1,6 +1,6 @@
 # Тестовое задание в Xsolla
 > Цель: реализовать приложение для управления встречами в компании.  
-Задание: ![ТЗ](https://github.com/hebgehogg/xsolla_test/blob/master/tz.pdf)
+Задание: ![ТЗ](https://github.com/hebgehogg/xsolla_test/blob/master/files/tz.pdf)
 
 ### Content  
 [contacts](#contacts)  
@@ -44,8 +44,9 @@ SQLITE_CONFIG=sqlite+aiosqlite:///xsolla_test_db.db
 Это нужно для того, чтобы при аналитике (такая изначально стояла задача) можно было более быстро проверить какие пользователи были на встрече.
 
 Ниже описаны поля и их типы.
+![Схема](https://github.com/hebgehogg/xsolla_test/blob/master/files/schema.jpeg)
 
-> meetings. 
+> meetings  
 
 | column | type |
 | --- | --- |
