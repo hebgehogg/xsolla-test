@@ -170,7 +170,7 @@ async def update(meeting: Meeting, session: AsyncSession = Depends(get_session))
         return f'exception: {ex}'
 
 
-@app.get("/api/delete/{meeting_id}")
+@app.delete("/api/delete/{meeting_id}")
 async def delete(meeting_id: int, session: AsyncSession = Depends(get_session)):
     try:
         check_request = f'SELECT * FROM meetings WHERE id = {meeting_id}'
